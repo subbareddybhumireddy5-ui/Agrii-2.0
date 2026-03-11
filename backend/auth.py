@@ -1,5 +1,6 @@
 from db import connect_db
 
+
 def register_user(name, email, password, role):
 
     conn = connect_db()
@@ -20,11 +21,19 @@ def login_user(email, password):
     cur = conn.cursor()
 
     cur.execute(
-        "SELECT * FROM users WHERE email=? AND password=?",
+        "SELECT id, name, email, role FROM users WHERE email=? AND password=?",
         (email, password)
     )
 
-    user = cur.fetchone()
+    row = cur.fetchone()
     conn.close()
 
-    return user
+    if row:
+        return {
+            "id": row[0],
+            "name": row[1],
+            "email": row[2],
+            "role": row[3]
+        }
+
+    return None

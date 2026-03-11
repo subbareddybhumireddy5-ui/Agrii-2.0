@@ -1,28 +1,66 @@
 import streamlit as st
-from db import connect_db
 
-def show():
-    st.title("👨‍🌾 Farmer Dashboard")
+st.set_page_config(layout="wide")
 
-    conn = connect_db()
-    cur = conn.cursor()
-    cur.execute("SELECT crop_name, quantity, price, location, image FROM crops")
-    crops = cur.fetchall()
-    conn.close()
+st.title("👨‍🌾 Farmer Dashboard")
 
-    if not crops:
-        st.warning("No crops added yet.")
-    else:
-        for crop, qty, price, loc, img in crops:
-            cols = st.columns([1,3])
-            with cols[0]:
-                if img:
-                    st.image(img, width=100)
-                else:
-                    st.image("https://via.placeholder.com/100", width=100)
-            with cols[1]:
-                st.markdown(f"### 🌾 {crop}")
-                st.markdown(f"📦 **Quantity:** {qty} kg")
-                st.markdown(f"💰 **Price:** ₹{price} /kg")
-                st.markdown(f"📍 **Location:** {loc}")
-            st.markdown("---")
+menu = st.sidebar.selectbox(
+    "Farmer Menu",
+    ["Dashboard", "Add Crop", "Industry Demand", "My Contracts", "Logout"]
+)
+
+# Dashboard
+if menu == "Dashboard":
+
+    st.subheader("Overview")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric("Crops Listed", "4")
+
+    with col2:
+        st.metric("Active Contracts", "2")
+
+    with col3:
+        st.metric("Pending Requests", "1")
+
+
+# Add Crop
+elif menu == "Add Crop":
+
+    st.subheader("Add Crop")
+
+    crop = st.text_input("Crop Name")
+    quantity = st.number_input("Quantity (kg)")
+    price = st.number_input("Expected Price")
+
+    if st.button("Add Crop"):
+        st.success("Crop Added Successfully")
+
+
+# Industry Demand
+elif menu == "Industry Demand":
+
+    st.subheader("Industry Crop Demand")
+
+    st.write("List of crops industries are requesting.")
+
+    st.table({
+        "Crop": ["Rice", "Wheat", "Corn"],
+        "Quantity Needed": ["2000 kg", "1500 kg", "3000 kg"]
+    })
+
+
+# My Contracts
+elif menu == "My Contracts":
+
+    st.subheader("My Contracts")
+
+    st.write("Contracts with industries will appear here.")
+
+
+# Logout
+elif menu == "Logout":
+
+    st.switch_page("pages/login.py")

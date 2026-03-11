@@ -1,29 +1,64 @@
 import streamlit as st
-from db import connect_db
 
-def show():
-    st.title("🏭 Industry Dashboard")
+st.set_page_config(layout="wide")
 
-    conn = connect_db()
-    cur = conn.cursor()
-    cur.execute("SELECT farmer_name, crop_name, quantity, price, location, image FROM crops")
-    crops = cur.fetchall()
-    conn.close()
+st.title("🏭 Industry Dashboard")
 
-    if not crops:
-        st.warning("No crops available in marketplace yet.")
-    else:
-        for farmer, crop, qty, price, loc, img in crops:
-            cols = st.columns([1,3])
-            with cols[0]:
-                if img:
-                    st.image(img, width=100)
-                else:
-                    st.image("https://via.placeholder.com/100", width=100)
-            with cols[1]:
-                st.markdown(f"### 🌾 {crop}")
-                st.markdown(f"👨‍🌾 **Farmer:** {farmer}")
-                st.markdown(f"📦 **Quantity:** {qty} kg")
-                st.markdown(f"💰 **Price:** ₹{price} /kg")
-                st.markdown(f"📍 **Location:** {loc}")
-            st.markdown("---")
+menu = st.sidebar.selectbox(
+    "Industry Menu",
+    ["Dashboard", "View Farmer Crops", "Create Contract", "Analytics", "Logout"]
+)
+
+# Dashboard
+if menu == "Dashboard":
+
+    st.subheader("Overview")
+
+    col1, col2, col3 = st.columns(3)
+
+    with col1:
+        st.metric("Available Crops", "120")
+
+    with col2:
+        st.metric("Active Contracts", "10")
+
+    with col3:
+        st.metric("Farmers Connected", "35")
+
+
+# View Crops
+elif menu == "View Farmer Crops":
+
+    st.subheader("Farmer Crops")
+
+    st.table({
+        "Farmer": ["Ravi", "Suresh", "Mahesh"],
+        "Crop": ["Rice", "Tomato", "Corn"],
+        "Quantity": ["500 kg", "800 kg", "1200 kg"]
+    })
+
+
+# Create Contract
+elif menu == "Create Contract":
+
+    st.subheader("Create Contract")
+
+    crop = st.text_input("Crop Name")
+    quantity = st.number_input("Required Quantity")
+
+    if st.button("Create Contract"):
+        st.success("Contract Created")
+
+
+# Analytics
+elif menu == "Analytics":
+
+    st.subheader("Market Analytics")
+
+    st.write("Demand and supply insights")
+
+
+# Logout
+elif menu == "Logout":
+
+    st.switch_page("pages/login.py")
